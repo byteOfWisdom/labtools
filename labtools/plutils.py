@@ -217,6 +217,11 @@ class Plot:
 		expects data to be array like with shape (2, n) 
 		or (1, n) and ydata to be given as array like of (1, n)
 		"""
+		if len(args) == 2 and type(args[0]) == str and type(args[1]) == str:
+			self.xlabel = args[0]
+			self.ylabel = args[1]
+			return
+
 		if some(args) and args != ():
 			self.add_element(*args, **kwds)
 
@@ -296,6 +301,9 @@ class Plot:
 		for task in self.pending:
 			task[0](*task[1])
 		plt.legend()
+
+		if some(self.xlabel): plt.xlabel(self.xlabel)
+		if some(self.ylabel): plt.ylabel(self.ylabel)
 
 
 	def preview(self):

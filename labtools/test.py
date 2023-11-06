@@ -1,12 +1,12 @@
 #!python3
 
 import plutils
-from easyparse import * # so that easyparse functions become toplevel here as well
+import easyparse
 
 
 def main():
 	data = easyparse.parse('test.data')
-	plot = plutils.Plot()
+	plot = plutils.Plot('random x data', 'some y values')
 
 
 	elem = {
