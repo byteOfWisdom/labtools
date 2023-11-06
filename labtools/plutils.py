@@ -4,7 +4,6 @@ import perror
 
 from matplotlib import pyplot as plt # for the actualy plotting part
 import numpy as np
-from scipy.stats import linregress
 
 
 def get_error(maybe_data, maybe_error):
