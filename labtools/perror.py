@@ -17,7 +17,7 @@ def make_errval(v, e):
 
 
 def vnum(a, b):
-	return ezip(a, b)
+    return ezip(a, b)
 
 # combines a list of values with a list of errors into a list of ErrVal
 def ezip(values, errors):
