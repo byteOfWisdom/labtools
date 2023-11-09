@@ -1,12 +1,11 @@
 #!python3
 
-import plutils
-import easyparse
+import __init__ as labtools
 
 
 def main():
-    data = easyparse.parse('test.data')
-    plot = plutils.Plot('random x data', 'some y values')
+    data = labtools.ep.parse('test.data')
+    plot = labtools.Plot('random x data', 'some y values')
 
 
     elem = {

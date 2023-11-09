@@ -5,3 +5,4 @@ from plutils import Plot
 import easyparse as ep
 import perror as p
 import numpy as np
+import notes
