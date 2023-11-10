@@ -18,6 +18,10 @@ def write_notes(file):
         handle.write(notes_str)
 
 
+def print_notes():
+	print(notes_str)
+
+
 def clear_notes():
 	global notes_str
 	notes_str = ''

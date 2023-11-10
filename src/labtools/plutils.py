@@ -58,9 +58,8 @@ def ensure_np_array(a):
 
 
 class Dataset:
-    needs_xrange = False #this should be constant for this type
-
     def __init__(self, x, y, label=None, color=None):
+        self.needs_xrange = False #this should be constant for this type
         self.x = x
         self.y = y
         self.label = label
@@ -82,9 +81,8 @@ class Dataset:
 
 
 class Errobar:
-    needs_xrange = False #this should be constant for this type
-
     def __init__(self, x, y, xerr=None, yerr=None, label=None, color=None):
+        self.needs_xrange = False #this should be constant for this type
         self.x = x
         self.y = y
         self.xerr = xerr
@@ -116,9 +114,8 @@ class Errobar:
 
 
 class Function:
-    needs_xrange = True
-
     def __init__(self, func, xinterval=None, label=None, color=None):
+        self.needs_xrange = True
         self.func = func
         self.xinterval = xinterval
         self.needs_xrange = not some(self.xinterval)
@@ -191,31 +188,35 @@ def make_plotable(args, kwds):
         return Dataset(x, y, label, color)
 
 
+def reset_pyplot():
+    plt.clf()
+    plt.cla()
+    plt.close()
 
-class Plot:
+
+class Plot():
     """
     wrapper for plotting common things faster and with less boilerplate
     """
-
-    # all plotable elements
-    elements = []
-
-    # used to store calls that are not doable at time
-    # of calling by the user.
-    # for example mark_intersect of a function that does not yet have
-    # an xinterval
-    pending = []
-
-    #limits for the overall diagram axes
-    xlim = [0, 0] 
-    ylim = [0, 0] 
-
-
     def __init__(self, *args, **kwds):
         """
         expects data to be array like with shape (2, n) 
         or (1, n) and ydata to be given as array like of (1, n)
         """
+    
+        # all plotable elements
+        self.elements = []
+
+        # used to store calls that are not doable at time
+        # of calling by the user.
+        # for example mark_intersect of a function that does not yet have
+        # an xinterval
+        self.pending = []
+
+        #limits for the overall diagram axes
+        self.xlim = [0, 0] 
+        self.ylim = [0, 0] 
+    
         if len(args) == 2 and type(args[0]) == str and type(args[1]) == str:
             self.xlabel = args[0]
             self.ylabel = args[1]
@@ -305,18 +306,17 @@ class Plot:
         if some(self.ylabel): plt.ylabel(self.ylabel)
 
 
+
+
     def preview(self):
+        reset_pyplot()
         self.make_plot()
         plt.show()
+        reset_pyplot()
 
 
     def save(self, filename):
+        reset_pyplot()
         self.make_plot()
         plt.savefig(filename)
-        plt.clf()
-
-
-    def save(self, file):
-        self.make_plot()
-        plt.save_fig(file)
-        plt.clf()
+        reset_pyplot()
