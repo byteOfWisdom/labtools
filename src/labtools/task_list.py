@@ -1,16 +1,55 @@
 from sys import argv
+from sys import stdin
+import tomllib
+from labtools.plutils import some
+import numpy as np
 
-def run_task_list(task_list):
+
+def numpyify(toml_data):
+    data = toml_data
+    for key in data.keys():
+        if type(data[key]) == dict:
+            data[key] = numpyify(data[key])
+        elif type(data[key]) == list:
+            data[key] = np.array(data[key])
+    return data
+
+
+def run_task_list(task_list, data_file = None):
+    argv_ = []
+
+    #use path provided in argv for the data
+    for arg in argv:
+        if arg[0] != '-':
+            data_file = arg
+        else:
+            argv_.append(arg)
+
+
+    data = None
+    if some(data_file):
+        with open(data_file) as file:
+            file_content = file.read()
+            data = tomllib.loads(file_content)
+            data = numpyify(data)
+
+
     preview = False
     if '-p' in argv: preview = True
-    if len(argv) == 1 or (len(argv) == 2 and '-p' in argv[1]):
+    if len(argv_) == 0 or (len(argv_) == 1 and '-p' in argv_[0]):
         # run all tasks
         for key in task_list.keys():
-            task_list[key](preview)
+            if some(data):
+                task_list[key](preview, data)        
+            else:
+                task_list[key](preview)
 
     else:
-        for task in argv[1:]:
+        for task in argv_:
             if task.strip('-') in task_list.keys():
-                task_list[task.strip('-')](preview)
+                if some(data):
+                    task_list[task.strip('-')](preview, data)
+                else:
+                    task_list[task.strip('-')](preview)
 
     return preview
