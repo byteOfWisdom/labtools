@@ -108,8 +108,8 @@ class Errobar:
 
 
     def lims(self):
-        xlims = [min(self.x), max(self.x)]
-        ylims = [min(self.y), max(self.y)]
+        xlims = [min(self.x - self.xerr), max(self.x + self.xerr)]
+        ylims = [min(self.y - self.yerr), max(self.y + self.yerr)]
         return (xlims, ylims)
 
 
@@ -216,6 +216,9 @@ class Plot():
         #limits for the overall diagram axes
         self.xlim = [0, 0] 
         self.ylim = [0, 0] 
+        self.title = ''
+
+        self.dpi = 250 # just a default value to make nice to look at charts
     
         if len(args) == 2 and type(args[0]) == str and type(args[1]) == str:
             self.xlabel = args[0]
@@ -301,6 +304,7 @@ class Plot():
         for task in self.pending:
             task[0](*task[1])
         plt.legend()
+        plt.title(self.title)
 
         if some(self.xlabel): plt.xlabel(self.xlabel)
         if some(self.ylabel): plt.ylabel(self.ylabel)
@@ -318,5 +322,21 @@ class Plot():
     def save(self, filename):
         reset_pyplot()
         self.make_plot()
-        plt.savefig(filename)
+        plt.savefig(
+            filename,
+            bbox_inches = 'tight',
+            pad_inches = 0.2,
+            dpi=self.dpi
+        )
         reset_pyplot()
+
+
+    def finish(self, preview, file):
+        """
+        show the plot if preview is true
+        or save to file if not
+        """
+        if preview:
+            self.preview()
+        else:
+            self.save(file)

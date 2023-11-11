@@ -5,5 +5,6 @@ from labtools.plutils import Plot
 import labtools.easyparse as ep
 import labtools.notetaking as notes
 import labtools.task_list
-import perror as p
+import labtools.misc
+import labtools.perror as p
 import numpy as np

@@ -138,8 +138,8 @@ class ErrVal:
 
 
     def __float__(self):
-        err_magn = int(log10(self.error))
-        val_magn = int(log10(self.value))
+        err_magn = int(log10(abs(self.error)))
+        val_magn = int(log10(abs(self.value)))
 
         if err_magn <= val_magn:
             significant = - err_magn
@@ -154,8 +154,8 @@ class ErrVal:
 
 
     def __str__(self):
-        err_magn = int(log10(self.error))
-        val_magn = int(log10(self.value))
+        err_magn = int(log10(abs(self.error)))
+        val_magn = int(log10(abs(self.value)))
 
         exponent = - min(err_magn, val_magn)
         significant = 1 + abs(err_magn - exponent)
