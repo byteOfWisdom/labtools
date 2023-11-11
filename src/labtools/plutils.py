@@ -108,8 +108,12 @@ class Errobar:
 
 
     def lims(self):
-        xlims = [min(self.x - self.xerr), max(self.x + self.xerr)]
-        ylims = [min(self.y - self.yerr), max(self.y + self.yerr)]
+        xerr, yerr = 0, 0
+        if some(self.xerr): xerr = self.xerr
+        if some(self.yerr): yerr = self.yerr
+
+        xlims = [min(self.x - xerr), max(self.x + xerr)]
+        ylims = [min(self.y - yerr), max(self.y + yerr)]
         return (xlims, ylims)
 
 
