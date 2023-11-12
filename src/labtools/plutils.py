@@ -1,6 +1,6 @@
 from enum import Enum
 
-import perror
+import labtools.perror
 
 from matplotlib import pyplot as plt # for the actualy plotting part
 import numpy as np

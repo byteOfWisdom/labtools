@@ -2,6 +2,7 @@ from sys import argv
 from sys import stdin
 import tomllib
 from labtools.plutils import some
+from labtools.easyparse import parse
 import numpy as np
 
 
@@ -13,6 +14,17 @@ def numpyify(toml_data):
         elif type(data[key]) == list:
             data[key] = np.array(data[key])
     return data
+
+
+def load_subfiles(toml_data):
+    data = toml_data
+    for key in data.keys():
+        if type(data[key]) == dict:
+            data[key] = load_subfiles(data[key])
+        elif type(data[key]) == str:
+            data[key] = parse(data[key])
+    return data
+
 
 
 def run_task_list(task_list, data_file = None):
@@ -31,6 +43,7 @@ def run_task_list(task_list, data_file = None):
         with open(data_file) as file:
             file_content = file.read()
             data = tomllib.loads(file_content)
+            data = load_subfiles(data)
             data = numpyify(data)
 
 
