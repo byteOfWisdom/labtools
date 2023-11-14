@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from math import sqrt, log10, log
-
+import numpy as np
+from labtools.misc import list_like
 
 def sq(a):
     return a ** 2
@@ -19,16 +20,30 @@ def make_errval(v, e):
 def vnum(a, b):
     return ezip(a, b)
 
+
 # combines a list of values with a list of errors into a list of ErrVal
 def ezip(values, errors):
-    return [ErrVal(values[i], errors[i]) for i in range(len(values))]
+    return np.array([ErrVal(values[i], errors[i]) for i in range(len(values))])
 
 
-#cause there's no magic method for log
-def elog(n):
-    v = log(n.value)
-    e = n.error / n.value
-    return ErrVal(v, e)
+
+def ev(v, e):
+    if list_like(v) and list_like(e):
+        return np.array(ezip(v, e))
+    elif list_like(v):
+        return np.array(list(map(const_err(e), v)))
+    else:
+        return ErrVal(v, e)
+
+
+def unzip(values):
+    if isinstance(values[0], ErrVal):
+        values_ = np.array([v.value for v in values])
+        errors = np.array([v.error for v in values])
+        return values_, errors
+    else:
+        return values, None
+
 
 
 num_type = [float, int]
@@ -151,6 +166,17 @@ class ErrVal:
 
     def __int__(self):
         return int(self.value)
+
+
+    def sqrt(self):
+        return self ** 0.5
+
+
+    def log(self):
+        value = log(self.value)
+        # d/dx ln(x) = 1/x
+        error = self.error / self.value
+        return ErrVal(value, error)
 
 
     def __str__(self):

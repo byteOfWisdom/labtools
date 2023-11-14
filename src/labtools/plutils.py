@@ -1,9 +1,11 @@
 from enum import Enum
 
-import labtools.perror
+from labtools import perror
 
 from matplotlib import pyplot as plt # for the actualy plotting part
 import numpy as np
+
+from scipy.stats import linregress
 
 
 def get_error(maybe_data, maybe_error):
@@ -80,6 +82,11 @@ class Dataset:
         return (xlims, ylims)
 
 
+    def linear_fit(self):
+        res = linregress(self.x, self.y)
+        return res.slope, res.intercept, res.stderr, res.intercept_stderr
+
+
 class Errobar:
     def __init__(self, x, y, xerr=None, yerr=None, label=None, color=None):
         self.needs_xrange = False #this should be constant for this type
@@ -117,6 +124,11 @@ class Errobar:
         return (xlims, ylims)
 
 
+    def linear_fit(self):
+        res = linregress(self.x, self.y)
+        return res.slope, res.intercept, res.stderr, res.intercept_stderr
+
+
 class Function:
     def __init__(self, func, xinterval=None, label=None, color=None):
         self.needs_xrange = True
@@ -148,6 +160,9 @@ class Function:
         if some(self.xinterval):
             return [min(self.xinterval), max(self.xinterval)]
         return None
+
+    def linear_fit(self):
+        return None # fitting a function to a function is BS
 
 
 def soft_iter(iterable):
@@ -189,6 +204,10 @@ def make_plotable(args, kwds):
         return Errobar(x, y, xerr, yerr, label, color)
 
     else:
+        if type(x[0]) == perror.ErrVal or type(y[0]) == perror.ErrVal:
+            x, xerr = perror.unzip(x)
+            y, yerr = perror.unzip(y)
+            return Errobar(x, y, xerr, yerr, label, color)
         return Dataset(x, y, label, color)
 
 
@@ -290,6 +309,10 @@ class Plot():
 
         for intersect in intersects:
             self.mark_x(intersect, label)
+
+
+    def linear_fit(self, refrence):
+        return self.elements[refrence].linear_fit()
 
 
     def make_plot(self):

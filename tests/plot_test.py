@@ -21,5 +21,16 @@ def main():
     plot.preview()
 
 
+    plot = labtools.Plot('an axis', 'another axis')
+    x = labtools.np.linspace(0, 100, 100)
+    y = labtools.p.ev(labtools.np.random.rand(100) * 10, labtools.np.random.rand(100) * 2)
+    noise = plot.add_element(x, y)
+
+    a, b, _, _ = plot.linear_fit(noise)
+    plot.add_element(lambda x: a * x + b)
+
+    plot.preview()
+
+
 if __name__ == '__main__':
     main()
