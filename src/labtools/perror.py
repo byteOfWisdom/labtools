@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from math import sqrt, log10, log
-import numpy as np
+
+from labtools.libs import numpy as np
 from labtools.misc import list_like
 
 def sq(a):
@@ -87,7 +87,7 @@ class ErrVal:
         v = self.value + other.value
         
         # add errors using gaussion error propagation
-        e = sqrt(sq(self.error) + sq(other.error))
+        e = np.sqrt(sq(self.error) + sq(other.error))
 
         return ErrVal(v, e)
 
@@ -118,7 +118,7 @@ class ErrVal:
             other = ErrVal(other, 0)
 
         v = self.value * other.value
-        e = sqrt(sq(other.value * self.error) + sq(self.value * other.error))
+        e = np.sqrt(sq(other.value * self.error) + sq(self.value * other.error))
 
         return ErrVal(v, e)
 
@@ -128,7 +128,7 @@ class ErrVal:
             other = ErrVal(other, 0)
 
         v = self.value / other.value
-        e = sqrt(sq(self.error / other.value) + sq(other.error * self.value / sq(other.value)))
+        e = np.sqrt(sq(self.error / other.value) + sq(other.error * self.value / sq(other.value)))
 
         return ErrVal(v, e)
 
@@ -138,7 +138,7 @@ class ErrVal:
             exp = ErrVal(exp, 0)
 
         v = self.value ** exp.value
-        e = sqrt(sq(exp.value * (self.value ** (exp.value - 1)) * self.error) + sq((self.value ** exp.value) * log(self.value) * exp.error))
+        e = np.sqrt(sq(exp.value * (self.value ** (exp.value - 1)) * self.error) + sq((self.value ** exp.value) * np.log(self.value) * exp.error))
 
         return ErrVal(v, e)
 
@@ -153,8 +153,8 @@ class ErrVal:
 
 
     def __float__(self):
-        err_magn = int(log10(abs(self.error)))
-        val_magn = int(log10(abs(self.value)))
+        err_magn = int(np.log10(abs(self.error)))
+        val_magn = int(np.log10(abs(self.value)))
 
         if err_magn <= val_magn:
             significant = - err_magn
@@ -173,15 +173,15 @@ class ErrVal:
 
 
     def log(self):
-        value = log(self.value)
+        value = np.log(self.value)
         # d/dx ln(x) = 1/x
         error = self.error / self.value
         return ErrVal(value, error)
 
 
     def __str__(self):
-        err_magn = int(log10(abs(self.error)))
-        val_magn = int(log10(abs(self.value)))
+        err_magn = int(np.log10(abs(self.error)))
+        val_magn = int(np.log10(abs(self.value)))
 
         exponent = - min(err_magn, val_magn)
         significant = 1 + abs(err_magn - exponent)

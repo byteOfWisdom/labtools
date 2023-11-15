@@ -2,8 +2,8 @@ from enum import Enum
 
 from labtools import perror
 
-from matplotlib import pyplot as plt # for the actualy plotting part
-import numpy as np
+from labtools.libs import pyplot as plt # for the actualy plotting part
+from labtools.libs import numpy as np
 
 from scipy.stats import linregress
 

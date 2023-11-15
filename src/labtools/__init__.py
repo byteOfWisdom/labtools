@@ -7,4 +7,5 @@ import labtools.notetaking as notes
 import labtools.task_list
 import labtools.misc
 import labtools.perror as p
-import numpy as np
+import labtools.libs
+from labtools.libs import numpy as np
