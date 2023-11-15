@@ -4,3 +4,35 @@ def sq(x):
 
 def list_like(var):
     return hasattr(var, "__getitem__") and hasattr(var, "__len__")
+
+
+def is_iter(var):
+    return hasattr(var, "__iter__")
+
+
+# helper for all the checks if optional variables are
+# set or not.
+def some(v): 
+    return not isinstance(v, type(None))
+
+
+# takes an iterable object and yields pairs of values 
+# in a sliding window
+def pairs(arr):
+    if not is_iter(arr): return None
+
+    iter_arr = iter(arr)
+    last = next(iter_arr, None)
+
+    while True:
+        current = next(iter_arr, None)
+        if some(current):
+            yield last, current
+            last = current
+        else:
+            break
+
+
+# this would be the proper abstract function, where pairs(a) is just group(a, 2)
+def group(arr, groupsize):
+    pass

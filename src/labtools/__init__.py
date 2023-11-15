@@ -8,4 +8,5 @@ import labtools.task_list
 import labtools.misc
 import labtools.perror as p
 import labtools.libs
+import labtools.math
 from labtools.libs import numpy as np

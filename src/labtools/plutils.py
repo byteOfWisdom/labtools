@@ -5,6 +5,8 @@ from labtools import perror
 from labtools.libs import pyplot as plt # for the actualy plotting part
 from labtools.libs import numpy as np
 
+from labtools.misc import some, pairs
+
 from scipy.stats import linregress
 
 
@@ -12,19 +14,6 @@ def get_error(maybe_data, maybe_error):
     if type(maybe_data[0]) == perror.ErrVal:
         data = list(map(v.value for v in maybe_data))
         error = list(map(v.error for v in maybe_data))
-
-
-# helper for all the checks if optional variables are
-# set or not.
-def some(v): 
-    return not isinstance(v, type(None))
-
-
-def paired(arr):
-    i = 0
-    while i < len(arr) - 1:
-        i += 1
-        yield arr[i - 1], arr[i]
 
 
 def crosses(a, b, c):
@@ -35,7 +24,7 @@ def crosses(a, b, c):
 
 def interpolate_intersects(x, y, y_cutoff):
     intersects =[]
-    for pair in paired(y):
+    for pair in pairs(y):
         if crosses(*pair, y_cutoff):
             id0 = list(y).index(pair[0])
             
