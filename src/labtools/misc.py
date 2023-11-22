@@ -33,6 +33,26 @@ def pairs(arr):
             break
 
 
+def slice_pairs(arr):
+    if not is_iter(arr): return None
+    iter_arr = iter(arr)
+
+    while True:
+        first, second = next(iter_arr, None), next(iter_arr, None)
+        if some(first) and some(second):
+            yield first, second
+        else:
+            break
+
+
 # this would be the proper abstract function, where pairs(a) is just group(a, 2)
 def group(arr, groupsize):
     pass
+
+
+
+def try_float(s):
+    try:
+        return float(s), True
+    except:
+        return None, False

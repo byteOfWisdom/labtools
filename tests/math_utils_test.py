@@ -10,6 +10,5 @@ def main():
 	print(tools.math.gcd(43, 1.5, 0.01))
 
 
-
 if __name__ == '__main__':
 	main()

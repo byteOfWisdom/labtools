@@ -96,7 +96,7 @@ class Errobar:
             label = self.label, 
             color = self.color, 
             linestyle = '', 
-            fmt = 'x')
+            fmt = '.')
 
 
     def find_intersects(self, level):
@@ -206,6 +206,13 @@ def reset_pyplot():
     plt.close()
 
 
+pnum = 0
+def plot_num():
+    global pnum
+    pnum += 1
+    return pnum
+
+
 class Plot():
     """
     wrapper for plotting common things faster and with less boilerplate
@@ -215,6 +222,8 @@ class Plot():
         expects data to be array like with shape (2, n) 
         or (1, n) and ydata to be given as array like of (1, n)
         """
+
+        self.num = plot_num()
     
         # all plotable elements
         self.elements = []
@@ -232,6 +241,10 @@ class Plot():
 
         self.dpi = 250 # just a default value to make nice to look at charts
     
+        self.x_marks = []
+        self.y_marks = []
+
+
         if len(args) == 2 and type(args[0]) == str and type(args[1]) == str:
             self.xlabel = args[0]
             self.ylabel = args[1]
@@ -273,20 +286,22 @@ class Plot():
         self.ylim = [y_lower - y_margin, y_upper + y_margin]
 
 
-    def mark_x(self, where, label=None):
+    def mark_x(self, where, label=None, color=None):
         """
         expects where to either be a value within at least one of the added x ranges
         of a function with the pattern: f(a, b) -> bool
         """
-        plt.vlines([where], *self.ylim, linestyle='--', label=label)
+        self.x_marks.append((where, label, color))
+        #plt.vlines([where], *self.ylim, linestyle='--', label=label)
 
 
-    def mark_y(self, where, label=None):
+    def mark_y(self, where, label=None, color=None):
         """
         expects where to either be a value within at least one of the added x ranges
         of a function with the pattern: f(a, b) -> bool
         """
-        plt.hlines([where], *self.xlim, linestyle='--', label=label)
+        self.y_marks.append((where, label, color))
+        #plt.hlines([where], *self.xlim, linestyle='--', label=label)
 
 
     def mark_intersect(self, refrence, level, label=None):
@@ -319,8 +334,16 @@ class Plot():
 
         for task in self.pending:
             task[0](*task[1])
+        for mark in self.x_marks:
+            where, label, color = mark
+            plt.vlines([where], *self.ylim, linestyle='--', label=label, color=color)
+
+        for mark in self.y_marks:
+            where, label, color = mark
+            plt.hlines([where], *self.ylim, linestyle='--', label=label, color=color)
+
         plt.legend()
-        plt.title(self.title)
+        plt.title('Fig {}: {}'.format(self.num, self.title))
 
         if some(self.xlabel): plt.xlabel(self.xlabel)
         if some(self.ylabel): plt.ylabel(self.ylabel)
@@ -329,14 +352,12 @@ class Plot():
 
 
     def preview(self):
-        reset_pyplot()
         self.make_plot()
         plt.show()
         reset_pyplot()
 
 
     def save(self, filename):
-        reset_pyplot()
         self.make_plot()
         plt.savefig(
             filename,

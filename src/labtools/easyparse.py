@@ -46,7 +46,11 @@ def remove_false_headers(arr):
     return res
 
 
-def write_printable(data, file):
+#from csv2pdf import convert
+
+from labtools.perror import ErrVal
+
+def write_printable(data, file, sig_digits=100):
     content = ''
     numbers = []
     for key in data:
@@ -56,8 +60,13 @@ def write_printable(data, file):
     content = content[:-2] + "\n"
     for i in range(len(numbers[0])):
         for col in numbers:
-            content += str(round(col[i], 2)) + ", "
+            if type(col[i]) == ErrVal:
+                content += str(col[i]) + ", "
+            else:
+                content += str(round(col[i], sig_digits)) + ", "
         content = content[:-2] + "\n"
 
     with open(file, 'w') as handle:
         handle.write(content)
+
+#    convert(file, file.replace('.csv', '.pdf'), align='J')

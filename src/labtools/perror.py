@@ -3,6 +3,8 @@ from dataclasses import dataclass
 from labtools.libs import numpy as np
 from labtools.misc import list_like
 
+from math import inf, nan
+
 def sq(a):
     return a ** 2
 
@@ -49,6 +51,10 @@ def unzip(values):
 num_type = [float, int]
 
 
+def within_deviation(a, b):
+    return abs(a.value - b.value) < (a.error + b.error)
+
+
 @dataclass
 class ErrVal:
     value : float
@@ -60,8 +66,13 @@ class ErrVal:
 
 
     def __eq__(self, other):
+        #if type(other) == float:
+        #    if other == inf or other == nan:
+        #        return self.value == other
+
         if type(other) in num_type:
-            return False #special case where we compare a value with an error to a float or int
+            return self.value == other
+            #return False #special case where we compare a value with an error to a float or int
 
         return self.value == other.value and self.error == other.error
 
@@ -153,6 +164,9 @@ class ErrVal:
 
 
     def __float__(self):
+        if self.value == inf or self.error == inf:
+            return 'inf'
+
         err_magn = int(np.log10(abs(self.error)))
         val_magn = int(np.log10(abs(self.value)))
 
@@ -180,16 +194,52 @@ class ErrVal:
 
 
     def __str__(self):
-        err_magn = int(np.log10(abs(self.error)))
+        if self.value == inf or self.error == inf or self.value == -inf or self.error == -inf:
+            return 'inf'
+
+
+
+        if self.value == 0.0:
+            return '{} +- {}'.format(self.value, round(self.error, 3))
+
+
         val_magn = int(np.log10(abs(self.value)))
 
+        if self.error == 0.0:
+            return '{}*10^{}'.format(
+                round(self.value * (10 ** (- val_magn + 1)), 4),
+                val_magn - 1
+                )
+
+        err_magn = int(np.log10(abs(self.error)))
+
+
+        if self.error == 0.0:
+            return str(round(self.value * (10 ** exponent), significant - exponent)) + "* 10^" + str(- exponent)
+
         exponent = - min(err_magn, val_magn)
-        significant = 1 + abs(err_magn - exponent)
+        significant = abs(err_magn - exponent)
+
+
+        return '({} +- {})*10^{}'.format(
+            round(self.value * (10 ** exponent), - err_magn - exponent + 1),
+            round(self.error * (10 ** exponent), - err_magn - exponent + 1),
+            int(- exponent)
+        )
+
+
+        if exponent == 0 or self.value == 0.0:
+            return '{} +- {}'.format(
+                round(self.value * (10 ** exponent), significant - exponent),
+                str(round(self.error * (10 ** exponent), significant - exponent))
+            )
+
+
 
         fmt = "( "
-        fmt += str(round(self.value * (10 ** exponent), significant))
+        fmt += str(round(self.value * (10 ** exponent), significant - exponent))
         fmt += " +- "
-        fmt += str(round(self.error * (10 ** exponent), significant))
+        fmt += str(round(self.error * (10 ** exponent), significant - exponent))
         fmt += " ) * 10^" + str(- exponent)
 
         return fmt

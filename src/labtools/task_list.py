@@ -3,6 +3,7 @@ from sys import stdin
 import tomllib
 from labtools.plutils import some
 from labtools.easyparse import parse
+from labtools.cassy_parser import parse_cassy_file
 import numpy as np
 
 
@@ -21,6 +22,8 @@ def load_subfiles(toml_data):
     for key in data.keys():
         if type(data[key]) == dict:
             data[key] = load_subfiles(data[key])
+        elif type(data[key]) == str and '.txt' in data[key]:
+        	data[key] = parse_cassy_file(data[key])
         elif type(data[key]) == str:
             data[key] = parse(data[key])
     return data
