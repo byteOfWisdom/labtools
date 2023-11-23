@@ -1,4 +1,6 @@
-from labtools.misc import try_float, some
+from labtools.misc import safe_float, some
+from labtools.libs import numpy as np
+
 
 def get_file(path):
 	with open(path) as file:
@@ -15,6 +17,9 @@ class Safe_list:
 		if index >= 0 and index < len(self.data):
 			return self.data[index]
 		return None
+
+	def __iter__(self):
+		return iter(self.data)
 
 
 def lazy_float(f):
@@ -44,33 +49,26 @@ def parse_cassy_file(path):
 	# i hate everything
 	data = {}
 	lines = Safe_list(get_file(path))
-
 	i = 0
-	tag = ''
-	line = []
-	acc = []
 
-	while True:
-		line = lines[i]
-		if not some(line): break
+	while not 'DEF=' in lines[i]: i += 1
 
-		if '=' in line and acc != []:
-			data[tag] = transform_table(line)
-		
+	data['headers'] = lines[i].removeprefix('DEF=').split('\t')
+	i += 1
 
-		if '=' in line and '=' in lines[i + 1]:
-			tag = line.split('=')[0].strip()
-			line = line_to_list(line.split('=')[1])
-			data[tag] = line
-		elif '=' in line and not '=' in lines[i + 1]:
-			acc = []
-			tag = line.split('=')[0].strip()
-			line = line_to_list(line.split('=')[1])
-		else:
-			acc.append(line_to_list(line))
+
+	content = []
+	while some(lines[i]):
+		fields = lines[i].split()
+		print(fields)
+
+		fields = map(lambda s: s.replace(',', '.'), fields)
+		content.append( list( map( safe_float, fields)))
+
 		i += 1
 
-	if acc != []:
-		data[tag] = transform_table(line, acc)
-	
+	print(content)
+	content = np.array(content)
+	data['data'] = np.transpose(content)
+
 	return data

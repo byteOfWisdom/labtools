@@ -56,3 +56,10 @@ def try_float(s):
         return float(s), True
     except:
         return None, False
+
+
+def safe_float(s):
+    try:
+        return float(s)
+    except:
+        return None
