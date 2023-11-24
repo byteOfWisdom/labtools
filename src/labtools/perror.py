@@ -14,6 +14,14 @@ def const_err(e):
     return lambda v: make_errval(v, e)
 
 
+def value(a):
+    return unzip(a)[0]
+
+
+def error(a):
+    return unzip(a)[1]
+
+
 #just a helper function
 def make_errval(v, e):
     return ErrVal(v, e)

@@ -60,14 +60,14 @@ def parse_cassy_file(path):
 	content = []
 	while some(lines[i]):
 		fields = lines[i].split()
-		print(fields)
+		#print(fields)
 
 		fields = map(lambda s: s.replace(',', '.'), fields)
 		content.append( list( map( safe_float, fields)))
 
 		i += 1
 
-	print(content)
+	#print(content)
 	content = np.array(content)
 	data['data'] = np.transpose(content)
 
