@@ -63,6 +63,19 @@ def within_deviation(a, b):
     return abs(a.value - b.value) < (a.error + b.error)
 
 
+def magnitude(x):
+    if x == 0.0:
+        return 0
+    try:
+        if x > 1:
+            return int(np.log10(x))
+        else:
+            return int(np.log10(x)) - 0
+    except:
+        return 0 # if the value is zero, the magnitude of that is 10^0
+
+
+
 @dataclass
 class ErrVal:
     value : float
@@ -201,7 +214,7 @@ class ErrVal:
         return ErrVal(value, error)
 
 
-    def __str__(self):
+    def old__str__(self):
         if self.value == inf or self.error == inf or self.value == -inf or self.error == -inf:
             return 'inf'
 
@@ -251,3 +264,17 @@ class ErrVal:
         fmt += " ) * 10^" + str(- exponent)
 
         return fmt
+
+
+    def __str__(self):
+        error_magn = magnitude(self.error)
+        value_magn = magnitude(self.value)
+
+        significant_value = np.round(self.value, - error_magn + 1)
+        significant_error = np.round(self.error, - error_magn + 1)
+        oom = 10 ** (- error_magn)
+
+        if error_magn == 0 or value_magn == 0:
+            return '{} +- {}'.format(significant_value, significant_error)
+
+        return '({} +- {})*10^{}'.format(round(self.value * oom, 1), round(self.error * oom, 1), error_magn)
