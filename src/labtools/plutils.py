@@ -120,7 +120,6 @@ class Errobar:
 
 class Function:
     def __init__(self, func, xinterval=None, label=None, color=None):
-        self.needs_xrange = True
         self.func = func
         self.xinterval = xinterval
         self.needs_xrange = not some(self.xinterval)
@@ -147,7 +146,9 @@ class Function:
     def lims(self):
         # this may cause unintended behaviour. have an eye on this
         if some(self.xinterval):
-            return [min(self.xinterval), max(self.xinterval)]
+            xlims = [min(self.xinterval), max(self.xinterval)]
+            ylims = [min(self.func(self.xinterval)), max(self.func(self.xinterval))]
+            return (xlims, ylims)
         return None
 
     def linear_fit(self):
@@ -181,6 +182,8 @@ def make_plotable(args, kwds):
     if 'yerr' in kwds.keys(): yerr = kwds['yerr']
 
     if callable(x):
+        if some(y):
+            return Function(x, y, label, color)
         # make function
         return Function(x, None, label, color)
 
