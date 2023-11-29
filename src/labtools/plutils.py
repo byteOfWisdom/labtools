@@ -5,7 +5,7 @@ from labtools import perror
 from labtools.libs import pyplot as plt # for the actualy plotting part
 from labtools.libs import numpy as np
 
-from labtools.misc import some, pairs
+from labtools.misc import some, pairs, is_real
 
 from scipy.stats import linregress
 
@@ -66,8 +66,8 @@ class Dataset:
 
 
     def lims(self):
-        xlims = [min(self.x), max(self.x)]
-        ylims = [min(self.y), max(self.y)]
+        xlims = [min(filter(is_real, self.x)), max(filter(is_real, self.x))]
+        ylims = [min(filter(is_real, self.y)), max(filter(is_real, self.y))]
         return (xlims, ylims)
 
 
@@ -108,8 +108,8 @@ class Errobar:
         if some(self.xerr): xerr = self.xerr
         if some(self.yerr): yerr = self.yerr
 
-        xlims = [min(self.x - xerr), max(self.x + xerr)]
-        ylims = [min(self.y - yerr), max(self.y + yerr)]
+        xlims = [min(filter(is_real, self.x - xerr)), max(filter(is_real, self.x + xerr))]
+        ylims = [min(filter(is_real, self.y - yerr)), max(filter(is_real, self.y + yerr))]
         return (xlims, ylims)
 
 
@@ -146,8 +146,8 @@ class Function:
     def lims(self):
         # this may cause unintended behaviour. have an eye on this
         if some(self.xinterval):
-            xlims = [min(self.xinterval), max(self.xinterval)]
-            ylims = [min(self.func(self.xinterval)), max(self.func(self.xinterval))]
+            xlims = [min(filter(is_real, self.xinterval)), max(filter(is_real, self.xinterval))]
+            ylims = [min(filter(is_real, self.func(self.xinterval))), max(filter(is_real(self.func(self.xinterval))))]
             return (xlims, ylims)
         return None
 

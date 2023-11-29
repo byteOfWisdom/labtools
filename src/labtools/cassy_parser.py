@@ -53,7 +53,13 @@ def parse_cassy_file(path):
 
     while not 'DEF=' in lines[i]: i += 1
 
-    data['headers'] = lines[i].removeprefix('DEF=').split('\t')
+    headers = lines[i].removeprefix('DEF=').split('\t')
+
+    indices = {}
+    for h in headers:
+        indices[h] = headers.index(h)
+
+    data['headers'] = indices
     i += 1
 
 

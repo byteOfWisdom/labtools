@@ -63,3 +63,11 @@ def safe_float(s):
         return float(s)
     except:
         return None
+
+
+from math import nan, inf
+from labtools import perror
+from labtools.libs import numpy as np
+
+def is_real(x):
+    return (not np.isnan(x)) and (not np.isinf(x))
