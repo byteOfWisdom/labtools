@@ -8,6 +8,9 @@ from labtools.libs import numpy as np
 from labtools.misc import some, pairs, is_real
 
 from scipy.stats import linregress
+from labtools.settings import get_setting
+
+import locale
 
 
 def get_error(maybe_data, maybe_error):
@@ -327,6 +330,20 @@ class Plot():
         this should not be called manually.
         it handles the pyplot interactions
         """
+
+        # here comes the localization for THAT tutor who insists
+        # on commas for decimal points... cause GERMANY...
+
+        if some(get_setting('localization')):
+            locale.setlocale(locale.LC_ALL, get_setting('localization'))
+            plt.rcdefaults()
+
+            # Tell matplotlib to use the locale we set above
+            plt.rcParams['axes.formatter.use_locale'] = True
+
+
+        # and here comes actual code
+
         plt.xlim(self.xlim)
         plt.ylim(self.ylim)
         plt.grid()
@@ -343,7 +360,7 @@ class Plot():
 
         for mark in self.y_marks:
             where, label, color = mark
-            plt.hlines([where], *self.ylim, linestyle='--', label=label, color=color)
+            plt.hlines([where], *self.xlim, linestyle='--', label=label, color=color)
 
         plt.legend()
         plt.title('Fig {}: {}'.format(self.num, self.title))

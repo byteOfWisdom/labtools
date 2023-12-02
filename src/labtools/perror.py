@@ -56,7 +56,7 @@ def unzip(values):
 
 
 
-num_type = [float, int]
+num_type = [float, int, np.float64]
 
 
 def within_deviation(a, b):

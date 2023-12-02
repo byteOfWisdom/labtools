@@ -1,5 +1,5 @@
 import numpy as np
-
+from labtools.settings import get_setting
 
 def parse(file, seperator=' '):
     table = []
@@ -46,9 +46,12 @@ def remove_false_headers(arr):
     return res
 
 
-#from csv2pdf import convert
+from csv2pdf import convert
+from pypdf import PdfMerger
 
 from labtools.perror import ErrVal
+
+pdfs = []
 
 def write_printable(data, file, sig_digits=100):
     content = ''
@@ -66,7 +69,25 @@ def write_printable(data, file, sig_digits=100):
                 content += str(round(col[i], sig_digits)) + ", "
         content = content[:-2] + "\n"
 
+    delimiter = ','
+    if get_setting('localization') == 'de_De':
+        content = content.replace(',', ';')
+        content = content.replace('.', ',')
+        delimiter = ';'
+
     with open(file, 'w') as handle:
         handle.write(content)
 
-#    convert(file, file.replace('.csv', '.pdf'), align='J')
+    convert(file, file.replace('.csv', '.pdf'), align='J', delimiter=delimiter)
+    pdfs.append(file.replace('.csv', '.pdf'))
+
+
+
+def merge_all():
+    merger = PdfMerger()
+
+    for file in pdfs:
+        merger.append(file)
+
+    merger.write('results/all_tables.pdf')
+    merger.close()

@@ -12,3 +12,4 @@ import labtools.math
 import labtools.cassy_parser
 from labtools.libs import numpy as np
 import labtools.defaults
+import labtools.settings

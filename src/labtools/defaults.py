@@ -5,3 +5,4 @@ from labtools.misc import sq, some
 from labtools.easyparse import write_printable
 from labtools.notetaking import note, note_var, write_notes, print_notes
 from labtools.task_list import run_task_list
+from labtools.settings import set_setting
