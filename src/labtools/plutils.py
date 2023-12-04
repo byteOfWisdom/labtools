@@ -9,6 +9,8 @@ from labtools.misc import some, pairs, is_real
 
 from scipy.stats import linregress
 from labtools.settings import get_setting
+from labtools.pdf_maker import queue_chart
+
 
 import locale
 
@@ -397,3 +399,4 @@ class Plot():
             self.preview()
         else:
             self.save(file)
+            queue_chart(file)

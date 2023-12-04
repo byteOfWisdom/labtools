@@ -13,3 +13,4 @@ import labtools.cassy_parser
 from labtools.libs import numpy as np
 import labtools.defaults
 import labtools.settings
+import labtools.pdf_maker

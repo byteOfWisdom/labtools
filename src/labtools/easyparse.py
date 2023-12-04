@@ -1,5 +1,6 @@
 import numpy as np
 from labtools.settings import get_setting
+from labtools.pdf_maker import queue_table, make_tex_file
 
 def parse(file, seperator=' '):
     table = []
@@ -46,48 +47,14 @@ def remove_false_headers(arr):
     return res
 
 
-from csv2pdf import convert
-from pypdf import PdfMerger
-
 from labtools.perror import ErrVal
 
 pdfs = []
 
+
 def write_printable(data, file, sig_digits=100):
-    content = ''
-    numbers = []
-    for key in data:
-        content += key + ", "
-        numbers.append(list(data[key]))
-
-    content = content[:-2] + "\n"
-    for i in range(len(numbers[0])):
-        for col in numbers:
-            if type(col[i]) == ErrVal:
-                content += str(col[i]) + ", "
-            else:
-                content += str(round(col[i], sig_digits)) + ", "
-        content = content[:-2] + "\n"
-
-    delimiter = ','
-    if get_setting('localization') == 'de_De':
-        content = content.replace(',', ';')
-        content = content.replace('.', ',')
-        delimiter = ';'
-
-    with open(file, 'w') as handle:
-        handle.write(content)
-
-    convert(file, file.replace('.csv', '.pdf'), align='J', delimiter=delimiter)
-    pdfs.append(file.replace('.csv', '.pdf'))
-
+    queue_table(data, file, sig_digits)
 
 
 def merge_all():
-    merger = PdfMerger()
-
-    for file in pdfs:
-        merger.append(file)
-
-    merger.write('results/all_tables.pdf')
-    merger.close()
+    make_tex_file('results/prints.tex')
