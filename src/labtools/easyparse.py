@@ -47,11 +47,6 @@ def remove_false_headers(arr):
     return res
 
 
-from labtools.perror import ErrVal
-
-pdfs = []
-
-
 def write_printable(data, file, sig_digits=100):
     queue_table(data, file, sig_digits)
 

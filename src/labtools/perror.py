@@ -270,8 +270,15 @@ class ErrVal:
         error_magn = magnitude(self.error)
         value_magn = magnitude(self.value)
 
-        significant_value = np.round(self.value, - error_magn + 1)
-        significant_error = np.round(self.error, - error_magn + 1)
+        significant_value = np.round(self.value, - error_magn)
+        significant_error = np.round(self.error, - error_magn)
+        
+        # if error got rounded to zero, simply increase the
+        # number of error digits used
+        while significant_error == 0.0:
+            error_magn -= 1
+            significant_error = np.round(self.error, - error_magn)
+
         oom = 10 ** (- error_magn)
 
         if error_magn == 0 or value_magn == 0:
