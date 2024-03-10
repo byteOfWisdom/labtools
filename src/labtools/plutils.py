@@ -81,6 +81,57 @@ class Dataset:
         return res.slope, res.intercept, res.stderr, res.intercept_stderr
 
 
+class Spectrum:
+    def __init__(self, wavelenghts):
+        self.needs_xrange = False #this should be constant for this type
+        self.wavelenghts = np.array(list(map(float, wavelenghts)))
+        self.width = 2.5
+    
+    def plot(self):
+        cmap = plt.get_cmap('rainbow')
+        colors = cmap((self.wavelenghts - 400) / (250))
+        plt.bar(self.wavelenghts, 1, width=self.width, label=self.wavelenghts, color=colors)
+
+    def lims(self):
+        return ([400, 700], [0, 1])
+
+
+class Heatmap:
+    def __init__(self, x, y, z, label=''):
+        self.x_grid = x
+        self.y_grid = y
+        self.z = z
+        self.label = label
+        self.needs_xrange = False
+
+    def plot(self):
+        dimx = max(self.x_grid) - min(self.x_grid) + 1
+        dimy = max(self.y_grid) - min(self.y_grid) + 1
+        data = np.zeros((dimy, dimx), dtype=np.float64)
+        for x, y, value in zip(self.x_grid, self.y_grid, self.z):
+            data[y][x] = value
+
+        plt.imshow(data)
+        plt.colorbar(shrink=0.5, label=self.label)
+        plt.grid(False)
+        plt.legend('',frameon=False)
+        plt.xticks(np.arange(dimx), labels=list(range(dimx)))
+        plt.yticks(np.arange(dimy), labels=list(range(dimy)))
+
+        for i in range(dimx):
+            for j in range(dimy):
+                if data[j][i] != 0.0:
+                    text = plt.text(i, j, round(data[j][i], 1),
+                       ha="center", va="center", color="w")
+
+
+    def lims(self):
+        dimx = max(self.x_grid) - min(self.x_grid) + 1
+        dimy = max(self.y_grid) - min(self.y_grid) + 1
+        return ([-0.5, dimx - 0.5], [-0.5, dimy -0.5])
+
+
+
 class Errobar:
     def __init__(self, x, y, xerr=None, yerr=None, label=None, color=None):
         self.needs_xrange = False #this should be constant for this type
@@ -167,6 +218,19 @@ def soft_iter(iterable):
 
 
 def make_plotable(args, kwds):
+    if type(args[0]) == str and args[0] == 'spectrum':
+        return Spectrum(args[1])
+    elif type(args[0]) == str and args[0] == 'spectrum_w':
+        spec = Spectrum(args[1])
+        spec.width = 1.0
+        return spec
+    elif type(args[0]) == str and args[0] == 'heatmap':
+        label = ''
+        if 'label' in kwds.keys(): 
+            label = kwds['label']
+        return Heatmap(args[1], args[2], args[3], label)
+
+
     # handle positional none string args
     arg_iter = soft_iter(filter(lambda e: type(e) != str, args))
     x = next(arg_iter)
@@ -221,6 +285,11 @@ def plot_num():
     return pnum
 
 
+def mod_plot_num():
+    global pnum
+    pnum += 0.1
+
+
 class Plot():
     """
     wrapper for plotting common things faster and with less boilerplate
@@ -251,7 +320,9 @@ class Plot():
     
         self.x_marks = []
         self.y_marks = []
-
+        
+        self.xlabel = ''
+        self.ylabel = ''
 
         if len(args) == 2 and type(args[0]) == str and type(args[1]) == str:
             self.xlabel = args[0]

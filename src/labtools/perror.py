@@ -175,6 +175,20 @@ class ErrVal:
         return ErrVal(v, e)
 
 
+    def sin(self):
+        error = np.cos(self.value) * self.error
+        return ErrVal(np.sin(self.value), error)
+
+
+    def cos(self):
+        error = np.sin(self.value) * self.error
+        return ErrVal(np.cos(self.value), error)
+
+
+    def tan(self):
+        return self.sin() / self.cos()
+
+
     def __rpow__(self, other):
         other = ErrVal(other, 0)
         return other ** self
@@ -214,74 +228,37 @@ class ErrVal:
         return ErrVal(value, error)
 
 
-    def old__str__(self):
-        if self.value == inf or self.error == inf or self.value == -inf or self.error == -inf:
-            return 'inf'
+    def new__str__(self):
+        magn = 0
+        local_value = self.value
+        local_error = self.error
 
+        if self.error < self.value:
+            while self.error * (10 ** magn) > 10:
+                magn -= 1
 
+            while self.error * (10 ** magn) < 1:
+                magn += 1
 
-        if self.value == 0.0:
-            return '{} +- {}'.format(self.value, round(self.error, 3))
+            local_value *= 10 ** magn
+            local_error *= 10 ** magn
 
-
-        val_magn = int(np.log10(abs(self.value)))
-
-        if self.error == 0.0:
-            return '{}*10^{}'.format(
-                round(self.value * (10 ** (- val_magn + 1)), 4),
-                val_magn - 1
-                )
-
-        err_magn = int(np.log10(abs(self.error)))
-
-
-        if self.error == 0.0:
-            return str(round(self.value * (10 ** exponent), significant - exponent)) + "* 10^" + str(- exponent)
-
-        exponent = - min(err_magn, val_magn)
-        significant = abs(err_magn - exponent)
-
-
-        return '({} +- {})*10^{}'.format(
-            round(self.value * (10 ** exponent), - err_magn - exponent + 1),
-            round(self.error * (10 ** exponent), - err_magn - exponent + 1),
-            int(- exponent)
-        )
-
-
-        if exponent == 0 or self.value == 0.0:
-            return '{} +- {}'.format(
-                round(self.value * (10 ** exponent), significant - exponent),
-                str(round(self.error * (10 ** exponent), significant - exponent))
-            )
-
-
-
-        fmt = "( "
-        fmt += str(round(self.value * (10 ** exponent), significant - exponent))
-        fmt += " +- "
-        fmt += str(round(self.error * (10 ** exponent), significant - exponent))
-        fmt += " ) * 10^" + str(- exponent)
-
-        return fmt
 
 
     def __str__(self):
+        #return self.new__str__()
         error_magn = magnitude(self.error)
         value_magn = magnitude(self.value)
 
-        significant_value = np.round(self.value, - error_magn)
-        significant_error = np.round(self.error, - error_magn)
-        
-        # if error got rounded to zero, simply increase the
-        # number of error digits used
-        while significant_error == 0.0:
-            error_magn -= 1
-            significant_error = np.round(self.error, - error_magn)
+        significant_value = np.round(self.value, - error_magn + 1)
+        significant_error = np.round(self.error, - error_magn + 1)
 
         oom = 10 ** (- error_magn)
 
         if error_magn == 0 or value_magn == 0:
             return '{} +- {}'.format(significant_value, significant_error)
 
-        return '({} +- {})*10^{}'.format(round(self.value * oom, 1), round(self.error * oom, 1), error_magn)
+        #if (error_magn >= value_magn and round(self.error * oom, 0) != 0):
+        #    return '({} +- {})*10^{}'.format(int(round(self.value * oom, 0)), int(round(self.error * oom, 0)), error_magn)
+
+        return '({} +- {})*10^{}'.format(significant_value * oom, significant_error * oom, error_magn)

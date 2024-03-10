@@ -71,3 +71,35 @@ from labtools.libs import numpy as np
 
 def is_real(x):
     return (not np.isnan(x)) and (not np.isinf(x))
+
+
+def unpack_data(data, *argv):
+    values = []
+    for arg in argv:
+        if list_like(arg) and not type(arg) == str:
+            values.append(perror.ev(data[arg[0]], data[arg[1]]))
+        else: 
+            values.append(data[arg])
+
+    return tuple(values)
+
+
+from kafe2.fit import XYContainer, Fit
+
+def fit_func(func, x, y):
+    if not type(x[0]) == perror.ErrVal:
+        x = perror.ev(x, 0)
+
+    if not type(y[0]) == perror.ErrVal:
+        y = perror.ev(y, 0)
+
+    fit = Fit(data=[perror.value(x), perror.value(y)], model_function=func)
+    fit.add_error(axis='x', err_val=perror.error(x))  # add the x-error to the fit
+    fit.add_error(axis='y', err_val=perror.error(y))  # add the y-errors to the fit
+
+    fit.do_fit()  # perform the fit
+
+    fitted_func = lambda x: func(x, *fit.parameter_values)
+    fit_results = perror.ev(fit.parameter_values, fit.parameter_errors)
+
+    return fitted_func, fit_results
