@@ -69,8 +69,6 @@ def magnitude(x):
     try:
         if x > 1:
             return int(np.log10(x))
-        elif x == 0.0:
-            return 0
         else:
             return int((np.log10(np.abs(x))))
     except:

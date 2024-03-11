@@ -84,7 +84,7 @@ def unpack_data(data, *argv):
     return tuple(values)
 
 
-from kafe2.fit import XYContainer, Fit
+from kafe2.fit import Fit
 
 def fit_func(func, x, y):
     if not type(x[0]) == perror.ErrVal:
