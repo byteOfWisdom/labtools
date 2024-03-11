@@ -10,5 +10,5 @@ license = {text = "MIT"}
 dependencies = [
 	'numpy',
 	'matplotlib',
-	'scipy',
+	'kafe2',
 ]

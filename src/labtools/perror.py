@@ -266,4 +266,4 @@ class ErrVal:
         #if (error_magn >= value_magn and round(self.error * oom, 0) != 0):
         #    return '({} +- {})*10^{}'.format(int(round(self.value * oom, 0)), int(round(self.error * oom, 0)), error_magn)
 
-        return '({} +- {})*10^{}'.format(significant_value * oom, significant_error * oom, error_magn)
+        return '({} +- {})*10^{}'.format(round(significant_value * oom, 1), round(significant_error * oom, 1), error_magn)

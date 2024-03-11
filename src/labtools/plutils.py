@@ -5,9 +5,8 @@ from labtools import perror
 from labtools.libs import pyplot as plt # for the actualy plotting part
 from labtools.libs import numpy as np
 
-from labtools.misc import some, pairs, is_real
+from labtools.misc import some, pairs, is_real, fit_func
 
-from scipy.stats import linregress
 from labtools.settings import get_setting
 from labtools.pdf_maker import queue_chart
 
@@ -77,8 +76,8 @@ class Dataset:
 
 
     def linear_fit(self):
-        res = linregress(self.x, self.y)
-        return res.slope, res.intercept, res.stderr, res.intercept_stderr
+        _, res = func_fit(lambda x, a, b: a * x + b, self.x, self.y)
+        return res[0].value, res[1].value, res[0].error, res[1].error
 
 
 class Spectrum:
