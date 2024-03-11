@@ -69,8 +69,10 @@ def magnitude(x):
     try:
         if x > 1:
             return int(np.log10(x))
+        elif x == 0.0:
+            return 0
         else:
-            return int(np.log10(x)) - 0
+            return int((np.log10(np.abs(x))))
     except:
         return 0 # if the value is zero, the magnitude of that is 10^0
 
@@ -188,6 +190,9 @@ class ErrVal:
     def tan(self):
         return self.sin() / self.cos()
 
+
+    def radians(self):
+        return self * np.pi / 180
 
     def __rpow__(self, other):
         other = ErrVal(other, 0)
