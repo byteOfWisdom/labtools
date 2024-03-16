@@ -76,7 +76,7 @@ class Dataset:
 
 
     def linear_fit(self):
-        _, res = func_fit(lambda x, a, b: a * x + b, self.x, self.y)
+        _, res = fit_func(lambda x, a, b: a * x + b, self.x, self.y)
         return res[0].value, res[1].value, res[0].error, res[1].error
 
 
@@ -169,8 +169,8 @@ class Errobar:
 
 
     def linear_fit(self):
-        res = linregress(self.x, self.y)
-        return res.slope, res.intercept, res.stderr, res.intercept_stderr
+        _, res = fit_func(lambda x, a, b: a * x + b, self.x, self.y)
+        return res[0].value, res[1].value, res[0].error, res[1].error
 
 
 class Function:

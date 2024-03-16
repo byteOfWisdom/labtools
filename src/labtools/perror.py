@@ -112,9 +112,20 @@ class ErrVal:
         return self.value < other.value
 
 
+    def __le__(self, other):
+        return self < other or self == other
+
+
+    def __ge__(self, other):
+        return self > other or self == other
+
+
     def __add__(self, other):
         if type(other) in num_type:
             other = ErrVal(other, 0)
+
+        elif type(other) == np.ndarray:
+            return other + self
 
         v = self.value + other.value
         
@@ -133,7 +144,7 @@ class ErrVal:
 
 
     def __radd__(self, other):
-        return self + other 
+        return self + other
         
 
     def __rmul__(self, other):
@@ -203,7 +214,7 @@ class ErrVal:
 
     def __float__(self):
         if self.value == inf or self.error == inf:
-            return 'inf'
+            return inf
 
         err_magn = int(np.log10(abs(self.error)))
         val_magn = int(np.log10(abs(self.value)))

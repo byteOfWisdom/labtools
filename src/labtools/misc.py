@@ -84,7 +84,9 @@ def unpack_data(data, *argv):
     return tuple(values)
 
 
-from kafe2.fit import Fit
+from kafe2.fit import Fit, xy_fit
+from scipy.optimize import curve_fit
+
 
 def fit_func(func, x, y):
     if not type(x[0]) == perror.ErrVal:
@@ -92,8 +94,9 @@ def fit_func(func, x, y):
 
     if not type(y[0]) == perror.ErrVal:
         y = perror.ev(y, 0)
-
-    fit = Fit(data=[perror.value(x), perror.value(y)], model_function=func)
+    
+    """
+    fit = Fit(data=[perror.value(x), perror.value(y)], model_function=func, minimizer='scipy')
     fit.add_error(axis='x', err_val=perror.error(x))  # add the x-error to the fit
     fit.add_error(axis='y', err_val=perror.error(y))  # add the y-errors to the fit
 
@@ -101,5 +104,12 @@ def fit_func(func, x, y):
 
     fitted_func = lambda x: func(x, *fit.parameter_values)
     fit_results = perror.ev(fit.parameter_values, fit.parameter_errors)
+    """
+    params, pcov = curve_fit(func, perror.value(x), perror.value(y))
+    fitted_func = lambda x: func(x, *params)
+
+    perr = np.sqrt(np.diag(pcov))
+
+    fit_results = perror.ev(params, perr)
 
     return fitted_func, fit_results
