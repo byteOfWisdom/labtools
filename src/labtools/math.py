@@ -1,6 +1,8 @@
 from labtools.misc import some, slice_pairs
 from labtools.libs import numpy as np
-
+from kafe2.fit import Fit, xy_fit
+from scipy.optimize import curve_fit
+from labtools import perror
 
 def gcd(a, b, deviation=0.0):
     #print('called gcd with {}, {}'.format(a, b))
@@ -40,3 +42,38 @@ def approx_greatest_common_divisor(nums, deviation=None):
 
 
 agcd = approx_greatest_common_divisor #because i might find the long name annoying
+
+
+def fit_func(func, x, y, use_kafe=False):
+    if not type(x[0]) == perror.ErrVal:
+        x = perror.ev(x, None)
+
+    if not type(y[0]) == perror.ErrVal:
+        y = perror.ev(y, None)
+    
+    if use_kafe:
+        res = xy_fit(
+            model_function=func,
+            x_data = perror.value(x),
+            y_data = perror.value(y),
+            x_error = perror.error(x),
+            y_error = perror.error(x),
+            p0 = perror.value(fit_func(func, x, y, False))[1],
+            profile = True,
+        )
+
+        params = [*res['parameter_values'].values()]
+        errors = [*res['parameter_errors'].values()]
+
+        fitted_func = lambda x: func(x, *params)
+        fit_results = perror.ev(params, errors)
+        return fitted_func, fit_results
+    else:
+        params, pcov = curve_fit(func, perror.value(x), perror.value(y))
+        fitted_func = lambda x: func(x, *params)
+
+        perr = np.sqrt(np.diag(pcov))
+
+        fit_results = perror.ev(params, perr)
+
+        return fitted_func, fit_results

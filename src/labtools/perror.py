@@ -160,6 +160,10 @@ class ErrVal:
         if type(other) in num_type:
             other = ErrVal(other, 0)
 
+        elif type(other) == np.ndarray:
+            return other * self
+
+
         v = self.value * other.value
         e = np.sqrt(sq(other.value * self.error) + sq(self.value * other.error))
 
@@ -200,8 +204,14 @@ class ErrVal:
         return self.sin() / self.cos()
 
 
+    def arctan(self):
+        e = self.error / (1 + sq(self.value))
+        return ErrVal(np.arctan(self.value), e)
+
+
     def radians(self):
         return self * np.pi / 180
+
 
     def __rpow__(self, other):
         other = ErrVal(other, 0)

@@ -19,9 +19,9 @@ def write_notes(file):
 
 
 def print_notes():
-	print(notes_str)
+    print(notes_str)
 
 
 def clear_notes():
-	global notes_str
-	notes_str = ''
+    global notes_str
+    notes_str = ''

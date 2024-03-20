@@ -30,7 +30,10 @@ def printable(number, sig_digits=100) -> str:
         str_num = str_num.replace('^', r'^{') 
         if '{' in str_num: str_num += r'}'
     else:
-        str_num = str(round(number, sig_digits))
+        if type(number) == str:
+            str_num = number
+        else:
+            str_num = str(round(number, sig_digits))
 
     if get_setting('localization') == 'de_De':
         str_num = str_num.replace('.', ',')

@@ -5,7 +5,8 @@ from labtools import perror
 from labtools.libs import pyplot as plt # for the actualy plotting part
 from labtools.libs import numpy as np
 
-from labtools.misc import some, pairs, is_real, fit_func
+from labtools.misc import some, pairs, is_real
+from labtools.math import fit_func
 
 from labtools.settings import get_setting
 from labtools.pdf_maker import queue_chart

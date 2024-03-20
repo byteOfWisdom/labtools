@@ -1,16 +1,12 @@
 # these are basically just the typical
 # top level bindings i'd import in my lab
 # data crunching things.
-from labtools.plutils import Plot
-import labtools.easyparse as ep
-import labtools.notetaking as notes
-import labtools.task_list
-import labtools.misc
-import labtools.perror as p
-import labtools.libs
-import labtools.math
-import labtools.cassy_parser
 from labtools.libs import numpy as np
-import labtools.defaults
-import labtools.settings
-import labtools.pdf_maker
+from labtools.plutils import Plot, mod_plot_num
+from labtools.perror import ev, unzip, value, error
+from labtools.math import fit_func
+from labtools.misc import sq, some, unpack_data
+from labtools.easyparse import write_printable, merge_all
+from labtools.notetaking import note, note_var, write_notes, print_notes
+from labtools.task_list import run_task_list
+from labtools.settings import set_setting

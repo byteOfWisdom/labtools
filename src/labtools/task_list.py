@@ -23,7 +23,7 @@ def load_subfiles(toml_data):
         if type(data[key]) == dict:
             data[key] = load_subfiles(data[key])
         elif type(data[key]) == str and '.txt' in data[key]:
-        	data[key] = parse_cassy_file(data[key])
+            data[key] = parse_cassy_file(data[key])
         elif type(data[key]) == str:
             data[key] = parse(data[key])
     return data
