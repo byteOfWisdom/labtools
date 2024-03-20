@@ -72,7 +72,7 @@ def tex_table(table : dict, name : str) -> str:
 
     table_content = table_content[:-len(row)] + newline + hline * 2 + '\n'
 
-    data = [table[key] for key in table.keys()]
+    data = np.array([table[key] for key in table.keys()])
     data = np.transpose(data)
 
     for line in data:

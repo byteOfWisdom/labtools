@@ -1,7 +1,7 @@
 from labtools.misc import some, slice_pairs
 from labtools.libs import numpy as np
-from kafe2.fit import Fit, xy_fit
-from scipy.optimize import curve_fit
+from kafe2.fit import Fit, xy_fit # type: ignore
+from scipy.optimize import curve_fit # type: ignore
 from labtools import perror
 
 def gcd(a, b, deviation=0.0):

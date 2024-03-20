@@ -10,3 +10,4 @@ from labtools.easyparse import write_printable, merge_all
 from labtools.notetaking import note, note_var, write_notes, print_notes
 from labtools.task_list import run_task_list
 from labtools.settings import set_setting
+from labtools import defaults
