@@ -20,7 +20,7 @@ def gcd(a, b, deviation=0.0):
         b = temp
 
     #print('result is {}'.format(a * (10 ** magn) ))
-    return a * (10 ** magn) 
+    return a * (10 ** magn)
 
 
 def approx_greatest_common_divisor(nums, deviation=None):
@@ -29,7 +29,7 @@ def approx_greatest_common_divisor(nums, deviation=None):
         return approx_greatest_common_divisor(nums, 0.1)
 
     # as greatest common divisor ist associative i.e. gcd(a, b, c) = gcd(a, gcd(b, c)) ...
-    # 
+    #
 
     # make sure the lenght of nums is divisble by two
     if len(nums) % 2:
@@ -46,11 +46,11 @@ agcd = approx_greatest_common_divisor #because i might find the long name annoyi
 
 def fit_func(func, x, y, use_kafe=False):
     if not type(x[0]) == perror.ErrVal:
-        x = perror.ev(x, None)
+        x = perror.ev(x, 0.0)
 
     if not type(y[0]) == perror.ErrVal:
-        y = perror.ev(y, None)
-    
+        y = perror.ev(y, 0.0)
+
     if use_kafe:
         res = xy_fit(
             model_function=func,
